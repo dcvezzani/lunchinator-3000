@@ -19,23 +19,16 @@ export const getEndDateFormatted = (date = null) => {
 };
 
 export const getEndDateParts = (date = null) => {
-  const endTimeLocal = getEndDate(date);
+  const now = date ? moment(date) : moment();
+
   return {
-    date: endTimeLocal.format(DATE_FORMAT),
-    timezone: endTimeLocal.format(TIME_ZONE_FORMAT)
+    date: now.format(DATE_FORMAT),
+    time: date ? now.format(TIME_FORMAT) : DEFAULT_TIME_VALUE,
+    timezone: now.format(TIME_ZONE_FORMAT)
   };
 };
 
-export const getEndDate = (date = null) => {
-  const now = date ? moment(date) : moment();
-  const dateValue = now.format(DATE_FORMAT);
-  const timezone = now.format(TIME_ZONE_FORMAT);
-  const timeValue = date ? now.format(TIME_FORMAT) : DEFAULT_TIME_VALUE;
-  // const timeValue = DEFAULT_TIME_VALUE;
-  const endTimeLocal = moment(
-    `${dateValue} ${timeValue}${timezone}`,
-    DATE_TIME_FORMAT
-  );
-
-  return endTimeLocal;
+export const getEndDate = (dateValue = null) => {
+  const { date, time, timezone } = getEndDateParts(dateValue);
+  return moment(`${date} ${time}${timezone}`, DATE_TIME_FORMAT);
 };
