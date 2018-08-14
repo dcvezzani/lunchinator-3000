@@ -19,6 +19,7 @@ export const getBallot = (guid, callback) => {
   db("ballots")
     .select()
     .where({ guid })
+    .first()
     .asCallback((err, rows) => {
       if (err)
         return callback({
