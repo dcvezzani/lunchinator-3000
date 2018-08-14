@@ -1,6 +1,6 @@
 import request from "request";
 // import db from '../../src/db';
-// import faker from 'faker';
+import faker from "faker";
 // import _ from 'lodash';
 // import moment from 'moment';
 
@@ -10,7 +10,7 @@ const GET_BALLOT = `${BASE_URL}/ballot/:id`;
 const CAST_VOTE = `${BASE_URL}/vote`;
 
 export const api = (url, callback) => {
-  console.log("url", url);
+  // console.log("url", url);
   let options = null;
   const defaultOptions = {
     headers: { "Content-Type": "application/json" }
@@ -27,7 +27,15 @@ export const api = (url, callback) => {
 export const createBallot = callback => {
   const options = {
     url: CREATE_BALLOT,
-    method: "POST"
+    method: "POST",
+    json: true,
+    body: {
+      voters: [
+        { name: faker.name.firstName(), emailAddress: faker.internet.email() },
+        { name: faker.name.firstName(), emailAddress: faker.internet.email() },
+        { name: faker.name.firstName(), emailAddress: faker.internet.email() }
+      ]
+    }
   };
   api(options, (error, response, body) => {
     callback(error, body);
@@ -37,7 +45,15 @@ export const createBallot = callback => {
 export const createBallotWithEndTime = (endTime, callback) => {
   const options = {
     url: CREATE_BALLOT,
-    method: "POST"
+    method: "POST",
+    json: true,
+    body: {
+      voters: [
+        { name: faker.name.firstName(), emailAddress: faker.internet.email() },
+        { name: faker.name.firstName(), emailAddress: faker.internet.email() },
+        { name: faker.name.firstName(), emailAddress: faker.internet.email() }
+      ]
+    }
   };
   api(options, (error, response, body) => {
     callback(error, body);

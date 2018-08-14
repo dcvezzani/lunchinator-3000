@@ -33,8 +33,8 @@ describe("internal api", () => {
     test("should create 1 new ballot", done => {
       createBallot((err, res) => {
         expect(err).toBeNull();
-        const rePayload = new RegExp(`{"guid":"[^"]+"}`);
-        expect(res).toMatch(rePayload);
+        const rePayload = new RegExp(`{"ballotId":"[^"]+"}`);
+        expect(JSON.stringify(res)).toMatch(rePayload);
 
         getBallots((err, rows) => {
           expect(rows).not.toBeNull();
@@ -62,7 +62,7 @@ describe("internal api", () => {
 
       createBallotWithEndTime(endTime, (err, res) => {
         getBallots((err, rows) => {
-          console.log("endTime", endTime.toString());
+          // console.log("endTime", endTime.toString());
           expect(rows[0].endTime).toBe(endTime);
           done();
         });
@@ -72,7 +72,7 @@ describe("internal api", () => {
 
   describe("fetch ballot", () => {
     const guid = faker.random.uuid();
-    const endTime = formatTime(moment());
+    const endTime = getEndDateFormatted();
     const ballotRecord = { guid, endTime };
 
     beforeAll(() => {
@@ -81,9 +81,10 @@ describe("internal api", () => {
 
     test("should fetch 1 existing ballot", done => {
       getBallot(guid, (err, res) => {
-        const ballot = JSON.parse(res);
-        expect(ballot.guid).toBe(guid);
-        expect(ballot.endTime).toBe(endTime);
+        // console.log("getBallot", res);
+        const ballotChoices = JSON.parse(res);
+        expect(Object.keys(ballotChoices)).toContain("choices");
+        expect(Object.keys(ballotChoices)).toContain("suggestion");
         done();
       });
     });
@@ -93,7 +94,7 @@ describe("internal api", () => {
     const guid = faker.random.uuid();
     const voterName = faker.name.firstName();
     const emailAddress = faker.internet.email();
-    const endTime = formatTime(moment());
+    const endTime = getEndDateFormatted();
     const ballotRecord = { guid, endTime };
     const restaurantId = faker.random.number();
     const voteRecord = {

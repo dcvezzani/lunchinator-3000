@@ -8,6 +8,7 @@
     "test": "jest"
   },
   "dependencies": {
+    "async": "^2.6.1",
     "body-parser": "~1.17.1",
     "change-case": "^3.0.2",
     "cookie-parser": "~1.4.3",

@@ -43,18 +43,40 @@ export const getBallots = callback => {
     });
 };
 
-export const createBallot = (endTime, callback) => {
+export const createBallot = ({ endTime, voters }, callback) => {
   const guid = uuidv1();
-  db("ballots")
-    .insert({ guid, endTime })
-    .asCallback(err => {
-      if (err)
-        return callback({
-          msg: "Unable to insert records",
-          raw: err.toString()
-        });
-      callback(err, { guid });
-    });
+
+  db.transaction(function(trx) {
+    db("ballots")
+      .transacting(trx)
+      .insert({ guid, endTime })
+      .asCallback(err => {
+        if (err) {
+          trx.rollback();
+          return callback({
+            msg: "Unable to insert records",
+            raw: err.toString()
+          });
+        }
+
+        const votes = voters.map(voter => ({ ballot_id: guid, ...voter }));
+        db("votes")
+          .transacting(trx)
+          .insert(votes)
+          .asCallback(err => {
+            if (err) {
+              trx.rollback();
+              return callback({
+                msg: "Unable to insert records",
+                raw: err.toString()
+              });
+            }
+
+            trx.commit();
+            callback(err, { ballotId: guid });
+          });
+      });
+  });
 };
 
 export const castVote = (voteData, callback) => {
