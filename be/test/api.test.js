@@ -1,4 +1,9 @@
-import { createBallot, getBallot, castVote } from "./helpers/internalApi";
+import {
+  createBallot,
+  getBallot,
+  castVote,
+  createBallotWithEndTime
+} from "./helpers/internalApi";
 import {
   prepareBallotsForCreateBallot,
   prepareBallotsForGetBallot,
@@ -6,8 +11,18 @@ import {
 } from "./helpers/models";
 import { getBallots, getVotes } from "../src/helpers/models";
 import faker from "faker";
-import { formatTime, getEndDate } from "../src/helpers/utils";
+import {
+  formatTime,
+  getEndDateFormatted,
+  getEndDateParts
+} from "../src/helpers/utils";
 import moment from "moment";
+import {
+  DEFAULT_TIME_VALUE,
+  DATE_FORMAT,
+  DATE_TIME_FORMAT,
+  TIME_ZONE_FORMAT
+} from "../src/constants";
 
 describe("internal api", () => {
   describe("create ballots", () => {
@@ -30,10 +45,24 @@ describe("internal api", () => {
     });
 
     test("should new ballot with default endTime of 11:45am local time", done => {
-      const endTime = getEndDate();
+      const endTime = getEndDateFormatted();
 
       createBallot((err, res) => {
         getBallots((err, rows) => {
+          expect(rows[0].endTime).toBe(endTime);
+          done();
+        });
+      });
+    });
+
+    test("should new ballot with custom endTime", done => {
+      const { date, timezone } = getEndDateParts();
+      const customTime = "14:30:00";
+      const endTime = getEndDateFormatted(`${date} ${customTime}${timezone}`);
+
+      createBallotWithEndTime(endTime, (err, res) => {
+        getBallots((err, rows) => {
+          console.log("endTime", endTime.toString());
           expect(rows[0].endTime).toBe(endTime);
           done();
         });

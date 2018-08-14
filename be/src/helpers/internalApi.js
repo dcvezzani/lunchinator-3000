@@ -3,12 +3,12 @@ import {
   getBallot as dbGetBallot,
   castVote as dbCastVote
 } from "./models";
-import { formatTime, getEndDate } from "./utils";
+import { formatTime, getEndDateFormatted } from "./utils";
 import moment from "moment";
 
 export const createBallot = (req, res, next) => {
   // todo: fetch endDate from req.body
-  const endTime = getEndDate();
+  const endTime = getEndDateFormatted();
   dbCreateBallot(endTime, (err, obj) => {
     res.json(obj);
   });

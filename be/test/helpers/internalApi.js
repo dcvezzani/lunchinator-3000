@@ -34,6 +34,16 @@ export const createBallot = callback => {
   });
 };
 
+export const createBallotWithEndTime = (endTime, callback) => {
+  const options = {
+    url: CREATE_BALLOT,
+    method: "POST"
+  };
+  api(options, (error, response, body) => {
+    callback(error, body);
+  });
+};
+
 // router.get("/ballot/:id", getBallot);
 export const getBallot = (guid, callback) => {
   api(GET_BALLOT.replace(/:id/, guid), (error, response, body) => {
