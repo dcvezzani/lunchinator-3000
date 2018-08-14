@@ -5,7 +5,7 @@ import moment from "moment";
 
 export const prepareVotes = (guid, cnt) => {
   const voteRecords = _.range(cnt).map(idx => ({
-    ballotGuid: guid,
+    ballotId: guid,
     emailAddress: faker.internet.email(),
     name: faker.name.firstName(),
     restaurantId: faker.random.number()
@@ -45,6 +45,17 @@ export const prepareBallotsForCreateBallot = () => {
 export const prepareBallotsForGetBallot = ballotRecord => {
   return db("ballots")
     .del()
+    .then(() => {
+      return db("ballots").insert(ballotRecord);
+    });
+};
+
+export const prepareVotesForCastVote = ballotRecord => {
+  return db("votes")
+    .del()
+    .then(() => {
+      return db("ballots").del();
+    })
     .then(() => {
       return db("ballots").insert(ballotRecord);
     });

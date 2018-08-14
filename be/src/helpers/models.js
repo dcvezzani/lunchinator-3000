@@ -4,7 +4,7 @@ const uuidv1 = require("uuid/v1");
 export const getVotes = (guid, callback) => {
   db("votes")
     .select()
-    .where({ ballotGuid: guid })
+    .where({ ballotId: guid })
     .asCallback((err, rows) => {
       if (err)
         return callback({
@@ -54,5 +54,18 @@ export const createBallot = (endTime, callback) => {
           raw: err.toString()
         });
       callback(err, { guid });
+    });
+};
+
+export const castVote = (voteData, callback) => {
+  db("votes")
+    .insert(voteData)
+    .asCallback(err => {
+      if (err)
+        return callback({
+          msg: "Unable to insert records",
+          raw: err.toString()
+        });
+      callback();
     });
 };

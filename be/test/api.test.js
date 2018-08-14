@@ -1,16 +1,17 @@
-import { createBallot, getBallot } from "./helpers/internalApi";
+import { createBallot, getBallot, castVote } from "./helpers/internalApi";
 import {
   prepareBallotsForCreateBallot,
-  prepareBallotsForGetBallot
+  prepareBallotsForGetBallot,
+  prepareVotesForCastVote
 } from "./helpers/models";
-import { getBallots } from "../src/helpers/models";
+import { getBallots, getVotes } from "../src/helpers/models";
 import faker from "faker";
-import { formatTime } from "../src/helpers/utils";
+import { formatTime, getEndDate } from "../src/helpers/utils";
 import moment from "moment";
 
 describe("internal api", () => {
   describe("create ballots", () => {
-    beforeAll(() => {
+    beforeEach(() => {
       return prepareBallotsForCreateBallot();
     });
 
@@ -23,6 +24,17 @@ describe("internal api", () => {
         getBallots((err, rows) => {
           expect(rows).not.toBeNull();
           expect(rows.length).toBe(1);
+          done();
+        });
+      });
+    });
+
+    test("should new ballot with default endTime of 11:45am local time", done => {
+      const endTime = getEndDate();
+
+      createBallot((err, res) => {
+        getBallots((err, rows) => {
+          expect(rows[0].endTime).toBe(endTime);
           done();
         });
       });
@@ -44,6 +56,37 @@ describe("internal api", () => {
         expect(ballot.guid).toBe(guid);
         expect(ballot.endTime).toBe(endTime);
         done();
+      });
+    });
+  });
+
+  describe("cast vote", () => {
+    const guid = faker.random.uuid();
+    const voterName = faker.name.firstName();
+    const emailAddress = faker.internet.email();
+    const endTime = formatTime(moment());
+    const ballotRecord = { guid, endTime };
+    const restaurantId = faker.random.number();
+    const voteRecord = {
+      id: restaurantId,
+      ballotId: guid,
+      voterName,
+      emailAddress
+    };
+
+    beforeAll(() => {
+      return prepareVotesForCastVote(ballotRecord);
+    });
+
+    test("should record 1 vote", done => {
+      castVote(voteRecord, (err, res, body) => {
+        expect(res.statusCode).toBe(200);
+        expect(body).toBe("OK");
+
+        getVotes(guid, (err, rows) => {
+          expect(rows.length).toBe(1);
+          done();
+        });
       });
     });
   });

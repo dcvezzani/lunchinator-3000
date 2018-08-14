@@ -4,7 +4,7 @@
 exports.up = function(knex) {
   return knex.schema.createTable("votes", function(t) {
     t.increments("id").primary();
-    t.text("ballot_guid");
+    t.text("ballot_id");
     t.integer("restaurant_id");
     t.string("name");
     t.text("email_address");

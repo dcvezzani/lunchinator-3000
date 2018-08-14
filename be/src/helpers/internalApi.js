@@ -1,26 +1,27 @@
 import {
-  getVotes,
-  createBallot as generateBallot,
-  getBallots,
-  getBallot as fetchBallot
+  createBallot as dbCreateBallot,
+  getBallot as dbGetBallot,
+  castVote as dbCastVote
 } from "./models";
-import { formatTime } from "./utils";
+import { formatTime, getEndDate } from "./utils";
+import moment from "moment";
 
-export const someEndpoint = (req, res, next) => {
-  res.render("index", { title: "Express" });
-};
 export const createBallot = (req, res, next) => {
-  const endTime = formatTime(new Date());
-  generateBallot(endTime, (err, obj) => {
+  // todo: fetch endDate from req.body
+  const endTime = getEndDate();
+  dbCreateBallot(endTime, (err, obj) => {
     res.json(obj);
   });
 };
 export const getBallot = (req, res, next) => {
-  fetchBallot(req.params.id, (err, obj) => {
-    console.log("obj", obj);
+  dbGetBallot(req.params.id, (err, obj) => {
     res.json(obj);
   });
 };
 export const castVote = (req, res, next) => {
-  res.render("index", { title: "Express" });
+  const voterName = req.query.voterName;
+  delete req.query.voterName;
+  dbCastVote({ ...req.query, name: voterName }, (err, obj) => {
+    res.sendStatus(200);
+  });
 };
