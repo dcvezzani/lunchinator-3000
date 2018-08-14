@@ -1,14 +1,13 @@
-import faker from 'faker';
+import faker from "faker";
 import {
   getVotes,
   createBallot,
   getBallots,
   getBallot
 } from "../src/helpers/models";
-import { prepareVotes, prepareBallots } from './helpers/models';
+import { prepareVotes, prepareBallots } from "./helpers/models";
 
 describe("models", () => {
-
   describe("votes", () => {
     let guid = null;
 
@@ -17,7 +16,7 @@ describe("models", () => {
       return prepareVotes(guid, 3);
     });
 
-    test('should fetch votes', done => {
+    test("should fetch votes", done => {
       getVotes(guid, (err, rows) => {
         expect(rows.length).toBe(3);
         done();
@@ -33,13 +32,11 @@ describe("models", () => {
       return prepareBallots(guid, 3);
     });
 
-    test('should fetch 1 ballot', done => {
+    test("should fetch 1 ballot", done => {
       getBallot(guid, (err, ballot) => {
-        expect(ballot.guid).toBe(guid)
+        expect(ballot.guid).toBe(guid);
         done();
       });
     });
   });
-
 });
-

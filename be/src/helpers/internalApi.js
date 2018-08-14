@@ -4,7 +4,7 @@ import {
   getBallots,
   getBallot as fetchBallot
 } from "./models";
-import { formatTime } from './utils'
+import { formatTime } from "./utils";
 
 export const someEndpoint = (req, res, next) => {
   res.render("index", { title: "Express" });
@@ -20,7 +20,6 @@ export const getBallot = (req, res, next) => {
     console.log("obj", obj);
     res.json(obj);
   });
-
 };
 export const castVote = (req, res, next) => {
   res.render("index", { title: "Express" });

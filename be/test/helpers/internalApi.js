@@ -1,4 +1,4 @@
-import request from 'request';
+import request from "request";
 // import db from '../../src/db';
 // import faker from 'faker';
 // import _ from 'lodash';
@@ -13,11 +13,11 @@ export const api = (url, callback) => {
   let options = null;
   const defaultOptions = {
     headers: { "Content-Type": "application/json" }
-  }
+  };
 
-  if (typeof url === 'object') options = {...defaultOptions, ...url};
+  if (typeof url === "object") options = { ...defaultOptions, ...url };
   else {
-    options = {...defaultOptions, url}
+    options = { ...defaultOptions, url };
   }
 
   request(options, callback);
@@ -25,8 +25,8 @@ export const api = (url, callback) => {
 
 export const createBallot = callback => {
   const options = {
-    url: CREATE_BALLOT, 
-    method: 'POST', 
+    url: CREATE_BALLOT,
+    method: "POST"
   };
   api(options, (error, response, body) => {
     callback(error, body);
@@ -39,4 +39,3 @@ export const getBallot = (guid, callback) => {
     callback(error, body);
   });
 };
-
